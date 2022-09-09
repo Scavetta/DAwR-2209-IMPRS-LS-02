@@ -46,8 +46,56 @@ sum(protein_df$Contaminant == "+")
 
 # Add the intensities ====
 
-# log2 transformations of the ratios ====
 
+# log2 transformations of the ratios ====
+# Super old-school, but perfectly legit:
+# Uncomment these to see in actions 
+# protein_df$Ratio.H.M <- log2(protein_df$Ratio.H.M)
+# protein_df$Ratio.M.L <- log2(protein_df$Ratio.M.L)
+# protein_df$Ratio.H.L <- log2(protein_df$Ratio.H.L)
+
+# protein_df$Ratio.M.L_log2 <- log2(protein_df$Ratio.M.L)
+# protein_df$Ratio.M.L_log10 <- log10(protein_df$Ratio.M.L)
+# protein_df$Ratio.M.L_zscore <- scale(protein_df$Ratio.M.L)
+
+# A bit more efficient:
+# First find the columns we want to transform
+# i.e. they start with "Ratio" but do NOT end with "Sig" 
+protein_df <- read.delim("data/Protein.txt")
+
+protein_df |> 
+  as_tibble() |>
+  select(starts_with("R"), -ends_with("Sig"))
+
+# Second, apply a transformation to only those columns
+protein_df |> 
+  as_tibble() |>
+  mutate(Ratio.H.M = log2(Ratio.H.M),
+         Ratio.H.L = log2(Ratio.H.L),
+         Ratio.M.L = log2(Ratio.M.L))
+
+# use mutate_at()
+protein_df |> 
+  as_tibble() |>
+  mutate_at(vars(starts_with("Rat"), -ends_with("Sig")), log2) 
+
+# use across()
+protein_df |> 
+  as_tibble() |>
+  mutate(across(c(starts_with("Rat"), -ends_with("Sig")), log2)) 
+
+protein_df <- read.delim("data/Protein.txt")
+protein_df |> 
+  as_tibble() |>
+  mutate(across(c(starts_with("Rat"), -ends_with("Sig")), list(log2 = log2, z_score = scale))) -> protein_df_transformed
+
+# The nice tidy way of working with our data:
+
+
+
+# add quotes? "" -> make it a character -> not appropriate
+# add arguments? not necessary
+# Is it the wrong structure? i.e. not a DF? no.
 
 # Part 2: Query data using filter() ----
 # Exercise 9.2 (Find protein values) ====

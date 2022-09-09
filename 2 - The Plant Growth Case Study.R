@@ -30,8 +30,9 @@ mean(PlantGrowth$weight)
 PlantGrowth %>% 
   group_by(group) %>%
   summarise(avg = mean(weight),
-            g_avg = mean(PlantGrowth$weight),
+            global_avg = mean(PlantGrowth$weight),
             stdev = sd(weight))
+
 
 # print(PlantGrowth %>% 
 #         group_by(group), n = 15, avg = mean(weight))
@@ -48,6 +49,14 @@ n <- log2(8)
 # -
 
 summarise(group_by(PlantGrowth, group), avg = mean(weight), stdev = sd(weight))
+
+# apply a transformation function:
+# z_score = (x_i - mean(x))/sd(x)
+PlantGrowth |> 
+  group_by(group) |> 
+  mutate(z_score = scale(weight)[,1])
+
+
 
 
 
