@@ -90,7 +90,14 @@ protein_df |>
   mutate(across(c(starts_with("Rat"), -ends_with("Sig")), list(log2 = log2, z_score = scale))) -> protein_df_transformed
 
 # The nice tidy way of working with our data:
-
+protein_df <- read.delim("data/Protein.txt")
+# 1,207 × 4 to 3,621 × 3
+protein_df |> 
+  as_tibble() |>
+  filter(Contaminant != "+") |> 
+  select(Uniprot, starts_with("R"), -ends_with("Sig")) |> 
+  pivot_longer(-Uniprot) |> 
+  mutate(value = log2(value))
 
 
 # add quotes? "" -> make it a character -> not appropriate
